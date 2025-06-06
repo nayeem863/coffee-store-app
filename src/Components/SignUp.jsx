@@ -8,19 +8,22 @@ const SignUp = () => {
     e.preventDefault()
      const form = e.target;
      const formData = new FormData(form);
-     const {email,password, ...userProfile} = Object.fromEntries(formData.entries())
+     const {email,password, ...rest} = Object.fromEntries(formData.entries())
+    
 
     //  const email = formData.get('email')
     //  const password = formData.get('password')
-     console.log(email,password,userProfile)
+    
      createUser(email,password)
      .then(result=>{
       console.log(result.user)
-     })
-     .catch(error=>{
-      console.log(error)
-     })
-
+       const userProfile = {
+      email,
+      ...rest,
+      creationTime: result.user.metadata?.creationTime,
+      lastSignInTime: result.user.metadata?.lastSignInTime,
+     }
+    
      fetch('http://localhost:3000/users',{
       method:'POST',
       headers:{
@@ -34,6 +37,14 @@ const SignUp = () => {
       toast.success('added user successfully')
       }
      })
+     
+
+
+     })
+     .catch(error=>{
+      console.log(error)
+     })
+
      
   }
     return (
